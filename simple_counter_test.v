@@ -1,3 +1,4 @@
+`include "sseg.v"
 module simple_counter_test_top(KEY, HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, CLOCK_50);
    input [3:0] KEY;
 	input CLOCK_50;
