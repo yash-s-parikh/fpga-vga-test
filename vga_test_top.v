@@ -91,8 +91,8 @@ module vga_test_top(
    end
    
    assign VGA_HS = vga_hs_pipeline_delay[1];
-   assign VGA_VS = vga_vs_pipeline_delay[1];
-   //assign VGA_VS = local_vga_vs;
+   //assign VGA_VS = vga_vs_pipeline_delay[1];
+   assign VGA_VS = local_vga_vs;
    
    
 endmodule

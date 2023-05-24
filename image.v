@@ -115,3 +115,16 @@ module image2(input vga_clk, input arst_n, output reg [7:0] red, output reg [7:0
    end // always@ (posedge vga_clk, negedge arst_n)
    
 endmodule
+
+module image3(input vga_clk, input arst_n, output [7:0] red, output [7:0] green, output [7:0] blue);
+   reg [7:0] pixel_counter;
+
+   always@(posedge vga_clk) begin
+      pixel_counter <= pixel_counter == 8'd255 ? 8'd0 : pixel_counter + 1'b1;
+   end
+
+   assign red = pixel_counter;
+   assign blue = pixel_counter;
+   assign green = pixel_counter;
+   
+endmodule // image3
