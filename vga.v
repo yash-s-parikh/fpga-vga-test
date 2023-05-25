@@ -89,7 +89,7 @@ module vga(input clk,
 
    assign {vga_r, vga_g, vga_b} = (x_counter >= x_active_video_length || y_counter >= y_active_video_height) ? {8'b0, 8'b0, 8'b0} : {red, green, blue};
 
-   assign vga_blank_n = 1'b1;
+   assign vga_blank_n = (x_counter >= x_active_video_length || y_counter >= y_active_video_height) ? 1'b0 : 1'b1;
    assign vga_sync_n = 1'b1;
 
 endmodule // vga
