@@ -117,14 +117,36 @@ module image2(input vga_clk, input arst_n, output reg [7:0] red, output reg [7:0
 endmodule
 
 module image3(input vga_clk, input arst_n, output [7:0] red, output [7:0] green, output [7:0] blue);
-   reg [7:0] pixel_counter;
-
-   always@(posedge vga_clk) begin
-      pixel_counter <= pixel_counter == 8'd255 ? 8'd0 : pixel_counter + 1'b1;
+   reg [7:0] gradient;
+   reg [19:0] current_pixel;
+   reg [2:0]  count5;
+   
+   
+   always@(posedge vga_clk, negedge arst_n) begin
+      if(arst_n == 1'b0) begin
+	 gradient <= 'b0;
+	 current_pixel <= 'b0;
+      end
+      else begin
+	 if(current_pixel >= 20'd420000 - 1'b1) begin
+	    current_pixel <= 20'b0;
+	 end
+	 else begin
+	    current_pixel <= current_pixel + 1'b1;
+	 end
+	 if(count5 == 3'd5) begin
+	    count5 <= 3'd0;
+	    gradient <= gradient + 2'd2;
+	 end
+	 else begin
+	    count5 <= count5 + 1'b1;
+	 end
+	 
+      end
    end
 
-   assign red = pixel_counter;
-   assign blue = pixel_counter;
-   assign green = pixel_counter;
+   assign red = current_pixel >= 30'd384000 - 1'b1 ? 8'b0 : gradient;
+   assign blue = current_pixel >= 30'd384000 - 1'b1 ? 8'b0 : gradient + 8'd85;
+   assign green = current_pixel >= 30'd384000 - 1'b1 ? 8'b0 : gradient + 8'd170;
    
 endmodule // image3
