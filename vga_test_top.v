@@ -2,7 +2,7 @@
  Author: Yash Parikh
  File: vga_test_top.v
  Description: Top level module of my DE1-SoC VGA test project
-*/
+ */
 `include "image.v"
 `include "vga.v"
 `include "simple_counter_test.v"
@@ -12,53 +12,53 @@
 
 module vga_test_top(
 
-	//////////// CLOCK //////////
-	input 		          		CLOCK2_50,
-	input 		          		CLOCK3_50,
-	input 		          		CLOCK4_50,
-	input 		          		CLOCK_50,
+		    //////////// CLOCK //////////
+		    input	 CLOCK2_50,
+		    input	 CLOCK3_50,
+		    input	 CLOCK4_50,
+		    input	 CLOCK_50,
 
-	//////////// SEG7 //////////
-	output		     [6:0]		HEX0,
-	output		     [6:0]		HEX1,
-	output		     [6:0]		HEX2,
-	output		     [6:0]		HEX3,
-	output		     [6:0]		HEX4,
-	output		     [6:0]		HEX5,
+		    //////////// SEG7 //////////
+		    output [6:0] HEX0,
+		    output [6:0] HEX1,
+		    output [6:0] HEX2,
+		    output [6:0] HEX3,
+		    output [6:0] HEX4,
+		    output [6:0] HEX5,
 
-	//////////// KEY //////////
-	input 		     [3:0]		KEY,
+		    //////////// KEY //////////
+		    input [3:0]	 KEY,
 
-	//////////// VGA //////////
-	output		          		VGA_BLANK_N,
-	output		     [7:0]		VGA_B,
-	output		          		VGA_CLK,
-	output		     [7:0]		VGA_G,
-	output		          		VGA_HS,
-	output		     [7:0]		VGA_R,
-	output		          		VGA_SYNC_N,
-	output		          		VGA_VS
-);
+		    //////////// VGA //////////
+		    output	 VGA_BLANK_N,
+		    output [7:0] VGA_B,
+		    output	 VGA_CLK,
+		    output [7:0] VGA_G,
+		    output	 VGA_HS,
+		    output [7:0] VGA_R,
+		    output	 VGA_SYNC_N,
+		    output	 VGA_VS
+		    );
 
 
 
-//=======================================================
-//  REG/WIRE declarations
-//=======================================================
-   wire [7:0]					red;
-   wire [7:0]					blue;
-   wire [7:0]					green;
-   wire						local_vga_hs;
-   wire						local_vga_vs;
+   //=======================================================
+   //  REG/WIRE declarations
+   //=======================================================
+   wire [7:0]			 red;
+   wire [7:0]			 blue;
+   wire [7:0]			 green;
+   wire				 local_vga_hs;
+   wire				 local_vga_vs;
    
-	
-   reg [1:0]					vga_hs_pipeline_delay;
-   reg [1:0]					vga_vs_pipeline_delay;
    
-	     
-//=======================================================
-//  Structural coding
-//=======================================================
+   reg [1:0]			 vga_hs_pipeline_delay;
+   reg [1:0]			 vga_vs_pipeline_delay;
+   
+   
+   //=======================================================
+   //  Structural coding
+   //=======================================================
    vga m_vga( .clk(CLOCK_50), 
 	      .arst_n(KEY[0]), 
 	      .blue(blue), 
@@ -75,7 +75,7 @@ module vga_test_top(
 
    simple_counter_test_top m_simple_counter_test_top(KEY, HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, CLOCK_50);
 
-   image2 m_image(.vga_clk(VGA_CLK), .arst_n(KEY[0]), .red(red), .green(green), .blue(blue));
+   image3 m_image(.vga_clk(VGA_CLK), .vga_blank_n(VGA_BLANK_N), .arst_n(KEY[0]), .red(red), .green(green), .blue(blue));
 
    always@(posedge VGA_CLK, negedge KEY[0]) begin
       if(KEY[0] == 1'b0) begin
@@ -92,7 +92,7 @@ module vga_test_top(
    
    assign VGA_HS = vga_hs_pipeline_delay[1];
    assign VGA_VS = vga_vs_pipeline_delay[1];
-  // assign VGA_VS = local_vga_vs;
+   // assign VGA_VS = local_vga_vs;
    
    
 endmodule

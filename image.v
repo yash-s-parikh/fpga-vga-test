@@ -1,4 +1,4 @@
-module image(input vga_clk, input arst_n, output reg [7:0] red, output reg [7:0] green, output reg [7:0] blue);
+module image(input vga_clk, input vga_blank_n, input arst_n, output reg [7:0] red, output reg [7:0] green, output reg [7:0] blue);
    reg [19:0] row_counter;
    reg [1:0]  rgb_state;
    reg [19:0] current_pixel;
@@ -75,8 +75,8 @@ module image(input vga_clk, input arst_n, output reg [7:0] red, output reg [7:0]
    
    
 endmodule
-
-module image2(input vga_clk, input arst_n, output reg [7:0] red, output reg [7:0] green, output reg [7:0] blue);
+//purple with pink horiz line
+module image2(input vga_clk, input vga_blank_n, input arst_n, output reg [7:0] red, output reg [7:0] green, output reg [7:0] blue);
    reg [19:0] current_pixel;
    reg	      is_different;
    
@@ -115,8 +115,8 @@ module image2(input vga_clk, input arst_n, output reg [7:0] red, output reg [7:0
    end // always@ (posedge vga_clk, negedge arst_n)
    
 endmodule
-
-module image3(input vga_clk, input arst_n, output [7:0] red, output [7:0] green, output [7:0] blue);
+// horiz gradient from black to red
+module image3(input vga_clk, input vga_blank_n, input arst_n, output [7:0] red, output [7:0] green, output [7:0] blue);
    reg [7:0] gradient;
    reg [19:0] current_pixel;
    reg [2:0]  count5;
@@ -126,6 +126,7 @@ module image3(input vga_clk, input arst_n, output [7:0] red, output [7:0] green,
       if(arst_n == 1'b0) begin
 	 gradient <= 'b0;
 	 current_pixel <= 'b0;
+	 count5 <= 'b0;
       end
       else begin
 	 if(current_pixel >= 20'd420000 - 1'b1) begin
@@ -134,19 +135,22 @@ module image3(input vga_clk, input arst_n, output [7:0] red, output [7:0] green,
 	 else begin
 	    current_pixel <= current_pixel + 1'b1;
 	 end
-	 if(count5 == 3'd5) begin
+	 if(count5 == 3'd4) begin
 	    count5 <= 3'd0;
 	    gradient <= gradient + 2'd2;
 	 end
-	 else begin
+	 else if(vga_blank_n == 1'b1) begin
 	    count5 <= count5 + 1'b1;
 	 end
-	 
+	 else
+	   count5 <= count5;
       end
    end
 
    assign red = current_pixel >= 30'd384000 - 1'b1 ? 8'b0 : gradient;
-   assign blue = current_pixel >= 30'd384000 - 1'b1 ? 8'b0 : gradient + 8'd85;
-   assign green = current_pixel >= 30'd384000 - 1'b1 ? 8'b0 : gradient + 8'd170;
+   //assign blue = current_pixel >= 30'd384000 - 1'b1 ? 8'b0 : gradient + 8'd85;
+   //assign green = current_pixel >= 30'd384000 - 1'b1 ? 8'b0 : gradient + 8'd170;
+   assign {green, blue} = {8'b0, 8'b0};
    
 endmodule // image3
+
